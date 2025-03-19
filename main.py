@@ -37,11 +37,15 @@ def analyze_code(code, language, analysis_type, temperature=0.7, max_tokens=1024
     api_key = st.secrets["GROQ_API_KEY"]
 
     if not api_key:
-        return "Error: API key not found. Please check your .env file."
-    
+        return "Error: API key not found. Please check your Streamlit secrets."
+
     try:
-        # Initialize Groq client without proxies
-        client = Groq(api_key=api_key.strip())
+        # Disable proxy settings if any
+        os.environ.pop("HTTP_PROXY", None)
+        os.environ.pop("HTTPS_PROXY", None)
+
+        # Initialize Groq client correctly
+        client = Groq(api_key=api_key.strip())  # No 'proxies' argument
         
         # Prepare the prompt based on analysis type
         if analysis_type == "Security":

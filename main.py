@@ -39,6 +39,7 @@ def analyze_code(code, language, analysis_type, temperature=0.7, max_tokens=1024
         return "Error: API key not found. Please check your .env file."
     
     try:
+        # Initialize Groq client without proxies
         client = Groq(api_key=api_key.strip())
         
         # Prepare the prompt based on analysis type
@@ -86,7 +87,7 @@ def analyze_code(code, language, analysis_type, temperature=0.7, max_tokens=1024
             
             Provide a detailed analysis with specific recommendations."""
         
-        # Get completion from Groq
+        # Get completion from Groq with updated parameters
         completion = client.chat.completions.create(
             model="mixtral-8x7b-32768",
             messages=[

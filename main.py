@@ -333,9 +333,6 @@ with tab3:
     - Submit pull requests
     - Improve documentation
     
-    #### 📄 License
-    This project is licensed under the MIT License - see the LICENSE file for details.
-    
     #### 🙏 Acknowledgments
     - Christ University for academic support
     - Groq AI for providing the API

@@ -34,7 +34,8 @@ def estimate_tokens(text):
 
 def analyze_code(code, language, analysis_type, temperature=0.7, max_tokens=1024):
     """Send code to Groq API for analysis"""
-    api_key = os.getenv('GROQ_API_KEY')
+    api_key = st.secrets["GROQ_API_KEY"]
+
     if not api_key:
         return "Error: API key not found. Please check your .env file."
     

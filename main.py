@@ -41,58 +41,64 @@ def analyze_code(code, language, analysis_type, temperature=0.7, max_tokens=1024
     try:
         client = Groq(api_key=api_key.strip())
         
-        # Customize prompt based on analysis type
-        if analysis_type == "Full Analysis":
-            prompt = f"""Analyze this {language} code and provide:
-            1. Any syntax errors or bugs
-            2. Potential improvements
-            3. A detailed explanation of the code
-            4. Suggested fixes
-            5. Performance considerations
+        # Prepare the prompt based on analysis type
+        if analysis_type == "Security":
+            prompt = f"""Analyze this {language} code for security vulnerabilities and best practices.
+            Focus on:
+            1. Input validation
+            2. Authentication/Authorization
+            3. Data encryption
+            4. Secure coding practices
+            5. Common vulnerabilities
             
             Code:
             {code}
-            """
-        elif analysis_type == "Security Analysis":
-            prompt = f"""Analyze this {language} code for security vulnerabilities and provide:
-            1. Potential security risks
-            2. Common vulnerabilities
-            3. Security best practices
-            4. Recommended security improvements
+            
+            Provide a detailed security analysis with specific recommendations."""
+            
+        elif analysis_type == "Performance":
+            prompt = f"""Analyze this {language} code for performance optimization opportunities.
+            Focus on:
+            1. Algorithm efficiency
+            2. Memory usage
+            3. Database queries
+            4. Caching opportunities
+            5. Resource utilization
             
             Code:
             {code}
-            """
-        else:  # Performance Analysis
-            prompt = f"""Analyze this {language} code for performance and provide:
-            1. Performance bottlenecks
-            2. Optimization opportunities
-            3. Memory usage considerations
-            4. Recommended performance improvements
+            
+            Provide a detailed performance analysis with specific optimization recommendations."""
+            
+        else:  # Full Analysis
+            prompt = f"""Analyze this {language} code and provide a comprehensive review.
+            Include:
+            1. Code structure and organization
+            2. Best practices and patterns
+            3. Potential bugs or issues
+            4. Performance considerations
+            5. Security considerations
+            6. Maintainability and readability
+            7. Suggestions for improvement
             
             Code:
             {code}
-            """
+            
+            Provide a detailed analysis with specific recommendations."""
         
-        # Estimate tokens
-        estimated_tokens = estimate_tokens(prompt)
-        if estimated_tokens > 800:  # Leave room for response
-            return "Error: Code is too long for analysis. Please reduce the code size."
-        
+        # Get completion from Groq
         completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
+            model="mixtral-8x7b-32768",
+            messages=[
+                {"role": "system", "content": "You are an expert code reviewer and analyzer. Provide detailed, actionable insights."},
+                {"role": "user", "content": prompt}
+            ],
             temperature=temperature,
-            max_completion_tokens=max_tokens,
-            top_p=1,
-            stream=False
+            max_tokens=max_tokens
         )
         
-        # Update token count
-        st.session_state.token_count += estimated_tokens
-        
         return completion.choices[0].message.content
-            
+        
     except Exception as e:
         return f"Error analyzing code: {str(e)}"
 
